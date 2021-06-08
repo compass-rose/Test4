@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +21,7 @@ import com.fro.util.FROTemHum;
 import com.fro.util.StreamUtil;
 
 /**
- * Created by Jorble on 2016/3/4.
+ *  连接任务设置
  */
 public class ConnectTask extends AsyncTask<Void, Void, Void> {
 
@@ -35,7 +36,6 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 	private Float tem;
 	private Float hum;
 	private Float pm25;
-	
 	private byte[] read_buff;
 
 	private Socket sunSocket;
@@ -44,7 +44,7 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 
 	private boolean CIRCLE = false;
 
-	public ConnectTask(Context context, TextView tem_tv,TextView hum_tv,TextView sun_tv,TextView pm25_tv, TextView info_tv) {
+	public ConnectTask(Context context, TextView tem_tv,TextView hum_tv,TextView sun_tv,TextView pm25_tv, TextView info_tv,Button refresh_bt) {
 		this.context = context;
 		this.sun_tv = sun_tv;
 		this.tem_tv = tem_tv;
@@ -59,12 +59,12 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 	@Override
 	protected void onProgressUpdate(Void... values) {
 		if (sunSocket!=null && temHumSocket!=null && pm25Socket!=null && info_tv!=null) {
-//		if (temHumSocket!=null ) {
 			info_tv.setTextColor(context.getResources().getColor(R.color.green));
 			info_tv.setText("连接正常！");
 		} else {
 			info_tv.setTextColor(context.getResources().getColor(R.color.red));
 			info_tv.setText("连接失败！");
+			examineDevice();
 		}
 		
 		//显示数据
@@ -88,6 +88,7 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 	 */
 	@Override
 	protected void onPreExecute() {
+
 		info_tv.setText("正在连接...");
 	}
 	
@@ -99,16 +100,17 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 	 */
 	@Override
 	protected Void doInBackground(Void... params) {
+
 		// 连接
 		sunSocket = getSocket(Const.SUN_IP, Const.SUN_PORT);
 		temHumSocket = getSocket(Const.TEMHUM_IP, Const.TEMHUM_PORT);
 		pm25Socket = getSocket(Const.PM25_IP, Const.PM25_PORT);
+
 		// 循环读取数据
 		while (CIRCLE) {
 			try {
 			// 如果全部连接成功
 			if (sunSocket!=null && temHumSocket!=null && pm25Socket!=null) {
-//			if (temHumSocket!=null) {
 					// 查询光照度
 					StreamUtil.writeCommand(sunSocket.getOutputStream(), Const.SUN_CHK);
 					Thread.sleep(Const.time/3);
@@ -141,8 +143,8 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 						Const.pm25 = (int) (float) pm25;
 					}
 					Log.i(Const.TAG, "Const.pm25="+Const.pm25);
-			}	
-					// 更新界面
+			}
+				// 更新界面
 					publishProgress();
 					Thread.sleep(200);
 					
@@ -162,7 +164,7 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 	 * @param port
 	 * @return
 	 */
-	private Socket getSocket(String ip, int port) {
+	protected  Socket getSocket(String ip, int port) {
 		Socket mSocket = new Socket();
 		InetSocketAddress mSocketAddress = new InetSocketAddress(ip, port);
 		// socket连接
@@ -210,5 +212,21 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 			e.printStackTrace();
 		}
 	}
-
+	/*
+	* 检测传感器连接情况
+	 */
+	void examineDevice(){
+		if(sunSocket == null){
+			Toast.makeText(context,"光照传感器连接失败",Toast.LENGTH_SHORT).show();
+			Log.e("GetConnetct","SunError");
+		}
+		if(temHumSocket == null){
+			Toast.makeText(context,"温湿度传感器连接失败",Toast.LENGTH_SHORT).show();
+			Log.e("GetConnetct","TemHumError");
+		}
+		if(pm25Socket == null){
+			Toast.makeText(context,"Pm2.5传感器连接失败",Toast.LENGTH_SHORT).show();
+			Log.e("GetConnetct","Pm25Error");
+		}
+	}
 }

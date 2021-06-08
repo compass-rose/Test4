@@ -21,9 +21,7 @@ import com.fro.util.FROSun;
 import com.fro.util.FROTemHum;
 import com.fro.util.StreamUtil;
 
-/**
- * Created by Jorble on 2016/3/4.
- */
+
 public class GraphTask extends AsyncTask<Void, Void, Void> {
 
 	private Context context;

@@ -1,16 +1,10 @@
 package com.fro.atmenv_cplxmonitorcase;
 
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,20 +13,16 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuView;
 
 
 public class MainActivity extends AppCompatActivity {
 	private Context context;
-
+	private Button  refresh_bt;
 	private TextView sun_tv;
 	private TextView tem_tv;
 	private TextView hum_tv;
@@ -40,8 +30,10 @@ public class MainActivity extends AppCompatActivity {
 	private Button graph_bt;
 	private ToggleButton connect_tb;
 	private TextView info_tv;
-	private MenuView.ItemView  SettingItem;
 	private ConnectTask connectTask;
+	private refreshTask refreshTask;
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -83,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 		hum_tv = (TextView) findViewById(R.id.hum_tv);
 		pm25_tv = (TextView) findViewById(R.id.pm25_tv);
 		graph_bt = (Button) findViewById(R.id.graph_bt);
+		refresh_bt = (Button) findViewById(R.id.refresh_bt);
 	}
 
 
@@ -90,14 +83,13 @@ public class MainActivity extends AppCompatActivity {
 	 * 按钮监听
 	 */
 	private void initEvent() {
+
 		// 连接
-
-
 		connect_tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
-					connectTask = new ConnectTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv);
+					connectTask = new ConnectTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv,refresh_bt);
 					connectTask.setCIRCLE(true);
 					connectTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				} else {
@@ -111,6 +103,15 @@ public class MainActivity extends AppCompatActivity {
 					info_tv.setText("请点击连接！");
 					info_tv.setTextColor(context.getResources().getColor(R.color.gray));
 				}
+			}
+		});
+
+		refresh_bt.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				refreshTask = new refreshTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv,refresh_bt);
+				refreshTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				refreshTask.closeSocket();
 			}
 		});
 
@@ -134,4 +135,7 @@ public class MainActivity extends AppCompatActivity {
 			connectTask.closeSocket();
 		}
 	}
+
+
+
 }

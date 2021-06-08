@@ -54,7 +54,7 @@ public class TemActivity extends AppCompatActivity {
         description.setText(""); //自定义描述
         lineChart.setDescription(description);
         Legend legend = lineChart.getLegend();
-        legend.setTextColor(Color.BLACK);
+        legend.setTextColor(Color.WHITE);
         setYAxis();
         setXAxis();
         setData();
@@ -71,7 +71,7 @@ public class TemActivity extends AppCompatActivity {
         yAxisLeft.setAxisMaxValue(100); // 设置Y轴最大值
         yAxisLeft.setAxisMinValue(0); // 设置Y轴最小值
         yAxisLeft.setGranularity(3f); // 设置间隔尺寸
-        yAxisLeft.setTextColor(Color.BLACK); //设置颜色
+        yAxisLeft.setTextColor(Color.WHITE); //设置颜色
         yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -99,7 +99,7 @@ public class TemActivity extends AppCompatActivity {
         // 使图表左右留出点空位
         xAxis.setAxisMinimum(-0.1f); // 设置X轴最小值
         //设置颜色
-        xAxis.setTextColor(Color.BLACK);
+        xAxis.setTextColor(Color.WHITE);
         // 设置标签的显示格式
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
@@ -149,7 +149,7 @@ public class TemActivity extends AppCompatActivity {
         //将每一组折线数据集添加到折线数据中
         LineData lineData = new LineData(lineDataSet1,lineDataSet2,lineDataSet3);
         //设置颜色
-        lineData.setValueTextColor(Color.BLACK);
+        lineData.setValueTextColor(Color.WHITE);
         //将折线数据设置给图表
         lineChart.setData(lineData);
     }
