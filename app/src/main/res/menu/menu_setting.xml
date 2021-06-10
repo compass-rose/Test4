@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/SettingMenu"
           android:title="设置" />
-    <item android:id="@+id/ExportDB"
+    <item android:id="@+id/ExportDB_Button"
           android:title="导出数据"/>
 </menu>

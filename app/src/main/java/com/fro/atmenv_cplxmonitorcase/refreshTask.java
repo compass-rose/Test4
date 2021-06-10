@@ -39,11 +39,10 @@ public class refreshTask extends ConnectTask{
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-        // 连接
-        sunSocket = getSocket(Const.SUN_IP, Const.SUN_PORT);
-        temHumSocket = getSocket(Const.TEMHUM_IP, Const.TEMHUM_PORT);
-        pm25Socket = getSocket(Const.PM25_IP, Const.PM25_PORT);
+    protected Void doInBackground(Socket... params) {
+        sunSocket = params[0];
+        temHumSocket  = params[1];
+        pm25Socket = params[2];
 
         // 读取数据
             try {

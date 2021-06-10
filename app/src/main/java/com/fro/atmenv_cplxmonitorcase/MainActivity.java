@@ -92,6 +92,13 @@ public class MainActivity extends AppCompatActivity {
 					connectTask = new ConnectTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv,refresh_bt);
 					connectTask.setCIRCLE(true);
 					connectTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					refresh_bt.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							refreshTask = new refreshTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv,refresh_bt);
+							refreshTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,connectTask.sunSocket,connectTask.temHumSocket,connectTask.pm25Socket);
+						}
+					});
 				} else {
 					// 取消任务
 					if (connectTask != null && connectTask.getStatus() == AsyncTask.Status.RUNNING) {
@@ -106,14 +113,7 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
-		refresh_bt.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				refreshTask = new refreshTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv,refresh_bt);
-				refreshTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-				refreshTask.closeSocket();
-			}
-		});
+
 
 		// 柱状图
 		graph_bt.setOnClickListener(new OnClickListener() {

@@ -23,7 +23,7 @@ import com.fro.util.StreamUtil;
 /**
  *  连接任务设置
  */
-public class ConnectTask extends AsyncTask<Void, Void, Void> {
+public class ConnectTask extends AsyncTask<Socket, Void, Void> {
 
 	private Context context;
 	TextView sun_tv;
@@ -38,9 +38,9 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 	private Float pm25;
 	private byte[] read_buff;
 
-	private Socket sunSocket;
-	private Socket temHumSocket;
-	private Socket pm25Socket;
+	protected Socket sunSocket;
+	protected Socket temHumSocket;
+	protected Socket pm25Socket;
 
 	private boolean CIRCLE = false;
 
@@ -99,7 +99,7 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 	 * @return
 	 */
 	@Override
-	protected Void doInBackground(Void... params) {
+	protected Void doInBackground(Socket... params) {
 
 		// 连接
 		sunSocket = getSocket(Const.SUN_IP, Const.SUN_PORT);

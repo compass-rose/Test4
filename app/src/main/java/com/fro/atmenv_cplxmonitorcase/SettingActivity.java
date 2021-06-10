@@ -1,10 +1,13 @@
 package com.fro.atmenv_cplxmonitorcase;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -28,7 +31,7 @@ public class SettingActivity extends AppCompatActivity {
     private EditText time_et;
     private Button SaveButton;
     private Button DefaultButton;
-
+    private Context context;
     @Override
     public boolean releaseInstance() {
         return super.releaseInstance();
@@ -53,8 +56,30 @@ public class SettingActivity extends AppCompatActivity {
 
            @Override
            public void onClick(View v) {
-               defalultData();
-               Toast.makeText(SettingActivity.this,"恢复默认设置成功",Toast.LENGTH_SHORT).show();
+               AlertDialog.Builder alertDialogbuilder = new AlertDialog.Builder(SettingActivity.this);
+               alertDialogbuilder.setTitle("恢复默认设置");
+               alertDialogbuilder.setMessage("是否恢复默认设置");
+               alertDialogbuilder.setCancelable(true);
+
+               //设置确定按钮
+               alertDialogbuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+                       defalultData();
+                       Toast.makeText(SettingActivity.this,"恢复默认设置成功",Toast.LENGTH_SHORT).show();
+                       dialog.dismiss();
+                       Log.d("DefaultButton","Default the data");
+                   }
+               });
+                //设定取消按钮
+               alertDialogbuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                       Log.d("DefaultButton","Cancel Default the data");
+                   }
+               });
+               alertDialogbuilder.show();
            }
        });
     }
@@ -72,7 +97,7 @@ public class SettingActivity extends AppCompatActivity {
         time_et = findViewById(R.id.time_et);
         SaveButton = findViewById(R.id.SaveButton);
         DefaultButton = findViewById(R.id.DefaultButton);
-
+        context = this;
     }
 
     /**
