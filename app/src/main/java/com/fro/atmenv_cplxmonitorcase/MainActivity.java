@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		context = this;
-		SQLManager sql = new SQLManager(this);
 		// 绑定控件
 		bindView();
 		// 事件监听

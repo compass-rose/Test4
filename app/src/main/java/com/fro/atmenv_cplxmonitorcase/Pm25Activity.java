@@ -29,6 +29,7 @@ import java.util.List;
 public class Pm25Activity extends AppCompatActivity {
     private LineChart lineChart; //折线图控件
     private Context context;
+   // SQLManager sql = new SQLManager(null);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +39,6 @@ public class Pm25Activity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-
         //初始化控件
         lineChart = findViewById(R.id.lc);
         initLineChart();
@@ -85,13 +85,12 @@ public class Pm25Activity extends AppCompatActivity {
     /**
      * 设置X轴数据
      */
-    public void setXAxis(){
+    private void setXAxis(){
         // X轴
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setDrawAxisLine(false); // 不绘制X轴
         xAxis.setDrawGridLines(false); // 不绘制网格线
         // 模拟X轴标签数据
-        SQLManager sql = new SQLManager(context);
         String[] weekStrs = new String[]{"星期一", "星期二", "星期三", "星期四", "星期五", "星期六","星期日"};
         xAxis.setLabelCount(weekStrs.length); // 设置标签数量
         xAxis.setTextColor(Color.GREEN); // 文本颜色

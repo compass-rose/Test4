@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class SQLManager {
+public class  SQLManager {
     private SQLhelper helper;
     private SQLiteDatabase db;
     private static final String TABLE_NAME = "atmosphere ";
