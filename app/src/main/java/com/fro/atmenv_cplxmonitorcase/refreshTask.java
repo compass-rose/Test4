@@ -26,15 +26,16 @@ public class refreshTask extends ConnectTask{
     private Socket sunSocket;
     private Socket temHumSocket;
     private Socket pm25Socket;
+    public  Context context;
 
     public refreshTask(Context context, TextView tem_tv, TextView hum_tv, TextView sun_tv, TextView pm25_tv, TextView info_tv,
                        Button refresh_bt) {
         super(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv, refresh_bt);
+        this.context = context;
     }
 
     @Override
     protected void onPreExecute() {
-        info_tv.setText("刷新成功");
         Log.d("RefreshTask","Refresh Start");
     }
 
@@ -89,5 +90,29 @@ public class refreshTask extends ConnectTask{
                 e.printStackTrace();
             }
         return null;
+    }
+    @Override
+    protected void onProgressUpdate(Void... values) {
+        if (sunSocket != null && temHumSocket != null && pm25Socket != null && info_tv != null) {
+            info_tv.setTextColor(context.getResources().getColor(R.color.green));
+            info_tv.setText("连接正常！");
+        } else {
+            info_tv.setTextColor(context.getResources().getColor(R.color.red));
+            info_tv.setText("连接失败！");
+            examineDevice();
+        }
+        //显示数据
+        if (Const.sun != null && sun_tv!=null) {
+            sun_tv.setText(String.valueOf(Const.sun));
+        }
+        if (Const.tem != null && tem_tv!=null) {
+            tem_tv.setText(String.valueOf(Const.tem));
+        }
+        if (Const.hum != null&& hum_tv!=null) {
+            hum_tv.setText(String.valueOf(Const.hum));
+        }
+        if (Const.pm25 != null&& pm25_tv!=null) {
+            pm25_tv.setText(String.valueOf(Const.pm25));
+        }
     }
 }
