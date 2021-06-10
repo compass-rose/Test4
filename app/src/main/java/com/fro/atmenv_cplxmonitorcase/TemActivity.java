@@ -2,6 +2,7 @@ package com.fro.atmenv_cplxmonitorcase;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.media.audiofx.AudioEffect;
 import android.os.Bundle;
@@ -54,7 +55,7 @@ public class TemActivity extends AppCompatActivity {
         description.setText(""); //自定义描述
         lineChart.setDescription(description);
         Legend legend = lineChart.getLegend();
-        legend.setTextColor(Color.WHITE);
+        legend.setTextColor(Color.BLACK);
         setYAxis();
         setXAxis();
         setData();
@@ -68,10 +69,10 @@ public class TemActivity extends AppCompatActivity {
         YAxis yAxisLeft = lineChart.getAxisLeft();// 左边Y轴
         yAxisLeft.setDrawAxisLine(true); // 绘制Y轴
         yAxisLeft.setDrawLabels(true); // 绘制标签
-        yAxisLeft.setAxisMaxValue(100); // 设置Y轴最大值
+        yAxisLeft.setAxisMaxValue(40); // 设置Y轴最大值
         yAxisLeft.setAxisMinValue(0); // 设置Y轴最小值
         yAxisLeft.setGranularity(3f); // 设置间隔尺寸
-        yAxisLeft.setTextColor(Color.WHITE); //设置颜色
+        yAxisLeft.setTextColor(Color.BLACK); //设置颜色
         yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -91,7 +92,15 @@ public class TemActivity extends AppCompatActivity {
         xAxis.setDrawAxisLine(false); // 不绘制X轴
         xAxis.setDrawGridLines(false); // 不绘制网格线
         // 模拟X轴标签数据
-        final String[] weekStrs = new String[]{"星期一", "星期二", "星期三", "星期四", "星期五", "星期六","星期日"};
+        SQLManager sql = new SQLManager(Const.upContext);
+        String s0 = sql.getPastDate(0).substring(5);
+        String s1 = sql.getPastDate(1).substring(5);
+        String s2 = sql.getPastDate(2).substring(5);
+        String s3 = sql.getPastDate(3).substring(5);
+        String s4 = sql.getPastDate(4).substring(5);
+        String s5 = sql.getPastDate(5).substring(5);
+        String s6 = sql.getPastDate(6).substring(5);
+        String[] weekStrs = new String[]{s6, s5, s4, s3, s2, s1,s0};
         xAxis.setLabelCount(weekStrs.length); // 设置标签数量
         xAxis.setTextColor(Color.GREEN); // 文本颜色
         xAxis.setTextSize(15f); // 文本大小为18dp
@@ -99,7 +108,7 @@ public class TemActivity extends AppCompatActivity {
         // 使图表左右留出点空位
         xAxis.setAxisMinimum(-0.1f); // 设置X轴最小值
         //设置颜色
-        xAxis.setTextColor(Color.WHITE);
+        xAxis.setTextColor(Color.BLACK);
         // 设置标签的显示格式
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
@@ -116,13 +125,20 @@ public class TemActivity extends AppCompatActivity {
     private void setData(){
         // 模拟数据1
         List<Entry> yVals1 = new ArrayList<>();
-        float[] ys1 = new float[]{80f, 90f, 80f, 90f, 80f, 80f,100f};
+        float[] d0 = dataSearch(0);
+        float[] d1 = dataSearch(1);
+        float[] d2 = dataSearch(2);
+        float[] d3 = dataSearch(3);
+        float[] d4 = dataSearch(4);
+        float[] d5 = dataSearch(5);
+        float[] d6 = dataSearch(6);
+        float[] ys1 = new float[]{d6[0], d5[0], d4[0], d3[0], d2[0], d1[0],d0[0]};
         // 模拟数据2
         List<Entry> yVals2 = new ArrayList<>();
-        float[] ys2 = new float[]{60f, 75f, 60f, 77f, 55f, 65f,75f};
+        float[] ys2 = new float[]{d6[1], d5[1], d4[1], d3[1], d2[1], d1[1],d0[1]};
         // 模拟数据3
         List<Entry> yVals3 = new ArrayList<>();
-        float[] ys3= new float[]{28f, 45f, 32f, 48f, 40f, 55f,45f};
+        float[] ys3= new float[]{d6[2], d5[2], d4[2], d3[2], d2[2], d1[2],d0[2]};
         for (int i = 0; i < ys1.length; i++) {
             yVals1.add(new Entry(i, ys1[i]));
             yVals2.add(new Entry(i, ys2[i]));
@@ -149,11 +165,36 @@ public class TemActivity extends AppCompatActivity {
         //将每一组折线数据集添加到折线数据中
         LineData lineData = new LineData(lineDataSet1,lineDataSet2,lineDataSet3);
         //设置颜色
-        lineData.setValueTextColor(Color.WHITE);
+        lineData.setValueTextColor(Color.BLACK);
         //将折线数据设置给图表
         lineChart.setData(lineData);
     }
     public static void startThisActivity(Activity activity) {
         activity.startActivity(new Intent(activity, TemActivity.class));
+    }
+    private float[] dataSearch(int date){
+        SQLManager sql = new SQLManager(Const.upContext);
+        Cursor c = sql.getCursor(date);
+        float sum = 0f;
+        int count = 0;
+        float max = 0f;
+        float min = 100000f;
+        float temp = 0f;
+        if(c.moveToFirst()){
+            do {
+                count ++;
+                temp = c.getFloat(c.getColumnIndex("tem"));
+                sum += temp;
+                if(max < temp){
+                    max = temp;
+                }
+                if(min > temp){
+                    min = temp;
+                }
+            }while(c.moveToNext());
+        }
+        sum = sum / count;
+        float[] data = new float[]{max,sum,min};
+        return data;
     }
 }

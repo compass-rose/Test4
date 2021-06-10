@@ -1,8 +1,11 @@
 package com.fro.atmenv_cplxmonitorcase;
+
+import android.content.Context;
+
 public class Const {
 
 	public static String TAG="CASE";
-	
+	public static Context upContext = null;
 	//光照度
 	public static String SUN_IP= "192.168.0.103";
 	public static int SUN_PORT=4001;

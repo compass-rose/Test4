@@ -125,6 +125,7 @@ public class GraphActivity extends Activity {
 	 * @param activity
 	 */
 	public static void startThisActivity(Activity activity) {
+		Const.upContext = activity;
 		activity.startActivity(new Intent(activity, GraphActivity.class));
 	}
 
