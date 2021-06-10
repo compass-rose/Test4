@@ -29,8 +29,8 @@ public class refreshTask extends ConnectTask{
     public  Context context;
 
     public refreshTask(Context context, TextView tem_tv, TextView hum_tv, TextView sun_tv, TextView pm25_tv, TextView info_tv,
-                       Button refresh_bt) {
-        super(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv, refresh_bt);
+                       SQLManager database) {
+        super(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv, database);
         this.context = context;
     }
 
@@ -78,6 +78,7 @@ public class refreshTask extends ConnectTask{
                         Const.pm25 = (int) (float) pm25;
                     }
                     Log.i(Const.TAG, "Const.pm25="+Const.pm25);
+                    super.insertDB(Const.sun,Const.tem,Const.hum,Const.pm25);
                 }
                 // 更新界面
                 publishProgress();

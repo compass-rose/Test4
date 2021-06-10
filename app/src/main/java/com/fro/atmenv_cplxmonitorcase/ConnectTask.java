@@ -41,16 +41,18 @@ public class ConnectTask extends AsyncTask<Socket, Void, Void> {
 	protected Socket sunSocket;
 	protected Socket temHumSocket;
 	protected Socket pm25Socket;
-
+	protected SQLManager Database;
 	private boolean CIRCLE = false;
 
-	public ConnectTask(Context context, TextView tem_tv,TextView hum_tv,TextView sun_tv,TextView pm25_tv, TextView info_tv,Button refresh_bt) {
+	public ConnectTask(Context context, TextView tem_tv,TextView hum_tv,TextView sun_tv,TextView pm25_tv, TextView info_tv
+			,SQLManager database) {
 		this.context = context;
 		this.sun_tv = sun_tv;
 		this.tem_tv = tem_tv;
 		this.hum_tv = hum_tv;
 		this.pm25_tv = pm25_tv;
 		this.info_tv = info_tv;
+		this.Database = database;
 	}
 
 	/**
@@ -143,6 +145,7 @@ public class ConnectTask extends AsyncTask<Socket, Void, Void> {
 						Const.pm25 = (int) (float) pm25;
 					}
 					Log.i(Const.TAG, "Const.pm25="+Const.pm25);
+					insertDB(Const.sun,Const.tem,Const.hum,Const.pm25);
 			}
 				// 更新界面
 					publishProgress();
@@ -228,5 +231,13 @@ public class ConnectTask extends AsyncTask<Socket, Void, Void> {
 			Toast.makeText(context,"Pm2.5传感器连接失败",Toast.LENGTH_SHORT).show();
 			Log.e("GetConnetct","Pm25Error");
 		}
+	}
+	/*
+	 *   插入数据库
+	 */
+	void insertDB(Integer sun,Integer tem,Integer hum,Integer pm25){
+		Database.insert(0,tem,hum,sun,pm25);
+		Log.d("Insert Database","sun: "+sun+"tem: "+tem+"hum: "+hum+"pm25: "+pm25);
+
 	}
 }

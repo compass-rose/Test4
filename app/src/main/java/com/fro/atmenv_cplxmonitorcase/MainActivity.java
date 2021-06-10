@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 	private TextView info_tv;
 	private ConnectTask connectTask;
 	private refreshTask refreshTask;
-
+	public  SQLManager DataBase;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 		bindView();
 		// 事件监听
 		initEvent();
+
 	}
 
 	@Override
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 		pm25_tv = (TextView) findViewById(R.id.pm25_tv);
 		graph_bt = (Button) findViewById(R.id.graph_bt);
 		refresh_bt = (Button) findViewById(R.id.refresh_bt);
+		DataBase = new SQLManager(context);
 	}
 
 
@@ -89,13 +91,13 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
-					connectTask = new ConnectTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv,refresh_bt);
+					connectTask = new ConnectTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv,DataBase);
 					connectTask.setCIRCLE(true);
 					connectTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					refresh_bt.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							refreshTask = new refreshTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv,refresh_bt);
+							refreshTask = new refreshTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv,DataBase);
 							refreshTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,connectTask.sunSocket,connectTask.temHumSocket,connectTask.pm25Socket);
 						}
 					});
