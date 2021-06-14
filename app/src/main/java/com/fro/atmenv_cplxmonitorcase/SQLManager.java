@@ -125,7 +125,7 @@ public class SQLManager {
         for (Atmosphere atm : atmosphere) {
             createCell(atm.id, atm.date, atm.tem, atm.hum, atm.sun, atm.pm25, mSheet);
         }
-        File xlsFile = new File(Environment.getExternalStorageDirectory(), "Environment.xls");
+        File xlsFile = new File(Environment.getExternalStorageDirectory(), "excel.xls");
         try {
             if (!xlsFile.exists()) {
                 xlsFile.createNewFile();

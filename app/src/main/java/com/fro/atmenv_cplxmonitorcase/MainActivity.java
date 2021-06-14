@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.strictmode.SqliteObjectLeakedViolation;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this;
         SQLManager sql = new SQLManager(this);
-        sql.insert(0,1,2,3,4);
         sql.deriveExcel();
         // 绑定控件
         bindView();
