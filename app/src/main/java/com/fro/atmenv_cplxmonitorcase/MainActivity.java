@@ -1,0 +1,180 @@
+package com.fro.atmenv_cplxmonitorcase;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+
+public class MainActivity extends AppCompatActivity {
+    private Context context;
+    private Button refresh_bt;
+    private TextView sun_tv;
+    private TextView tem_tv;
+    private TextView hum_tv;
+    private TextView pm25_tv;
+    private Button graph_bt;
+    private ToggleButton connect_tb;
+    private TextView info_tv;
+    private ConnectTask connectTask;
+    private refreshTask refreshTask;
+    public SQLManager DataBase;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        context = this;
+        SQLManager sql = new SQLManager(this);
+        sql.insert(0,1,2,3,4);
+        sql.deriveExcel();
+        // 绑定控件
+        bindView();
+		//初始化数据
+        setData();
+        // 事件监听
+        initEvent();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_setting, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.SettingMenu) {
+            Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+            startActivity(intent);
+        }
+        return true;
+    }
+
+
+    /**
+     * 绑定控件
+     */
+    private void bindView() {
+
+        connect_tb = (ToggleButton) findViewById(R.id.connect_tb);
+        info_tv = (TextView) findViewById(R.id.info_tv);
+        sun_tv = (TextView) findViewById(R.id.sun_tv);
+        tem_tv = (TextView) findViewById(R.id.tem_tv);
+        hum_tv = (TextView) findViewById(R.id.hum_tv);
+        pm25_tv = (TextView) findViewById(R.id.pm25_tv);
+        graph_bt = (Button) findViewById(R.id.graph_bt);
+        refresh_bt = (Button) findViewById(R.id.refresh_bt);
+        DataBase = new SQLManager(context);
+    }
+
+
+    /**
+     * 按钮监听
+     */
+    private void initEvent() {
+
+        // 连接
+        connect_tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    connectTask = new ConnectTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv, DataBase);
+                    connectTask.setCIRCLE(true);
+                    connectTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    refresh_bt.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            refreshTask = new refreshTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv, DataBase);
+                            refreshTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, connectTask.sunSocket, connectTask.temHumSocket, connectTask.pm25Socket);
+                        }
+                    });
+                } else {
+                    // 取消任务
+                    if (connectTask != null && connectTask.getStatus() == AsyncTask.Status.RUNNING) {
+                        connectTask.setCIRCLE(false);
+                        // 如果Task还在运行，则先取消它
+                        connectTask.cancel(true);
+                        connectTask.closeSocket();
+                    }
+                    info_tv.setText("请点击连接！");
+                    info_tv.setTextColor(context.getResources().getColor(R.color.gray));
+                }
+            }
+        });
+
+
+        // 柱状图
+        graph_bt.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GraphActivity.startThisActivity((Activity) context);
+            }
+        });
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        // 取消任务
+        if (connectTask != null && connectTask.getStatus() == AsyncTask.Status.RUNNING) {
+            connectTask.setCIRCLE(false);
+            // 如果Task还在运行，则先取消它
+            connectTask.cancel(true);
+            connectTask.closeSocket();
+        }
+    }
+
+    /**
+     * 读取并设置设置文件中数据
+     */
+    private void setData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("Setting", MODE_PRIVATE);
+        String SUN_IP = sharedPreferences.getString("SUN_IP", getResources().getString(R.string.default_SUN_IP));
+        String SUN_PORT = String.valueOf(sharedPreferences.getInt("SUN_PORT", Integer.parseInt(getResources().getString(R.string.default_SUN_PORT))));
+        String TEMHUM_IP = sharedPreferences.getString("TEMHUM_IP", getResources().getString(R.string.default_TEMHUM_IP));
+        String TEMHUM_PORT = String.valueOf(sharedPreferences.getInt("TEMHUM_PORT", Integer.parseInt(getResources().getString(R.string.default_TEMHUM_PORT))));
+        String PM25_IP = sharedPreferences.getString("PM25_IP", getResources().getString(R.string.default_PM25_IP));
+        String PM25_PORT = String.valueOf(sharedPreferences.getInt("PM25_PORT", Integer.parseInt(getResources().getString(R.string.default_PM25_PORT))));
+        String time = String.valueOf(sharedPreferences.getInt("time", Integer.parseInt(getResources().getString(R.string.default_time))));
+
+        Log.d("ReadFILE_Main", SUN_IP);
+        Log.d("ReadFILE_Main", SUN_PORT);
+        Log.d("ReadFILE_Main", TEMHUM_IP);
+        Log.d("ReadFILE_Main", TEMHUM_PORT);
+        Log.d("ReadFILE_Main", PM25_IP);
+        Log.d("ReadFILE_Main", PM25_PORT);
+        Log.d("ReadFILE_Main", time);
+
+
+        Const.SUN_IP = SUN_IP;
+        Const.SUN_PORT = Integer.parseInt(SUN_PORT);
+        Const.TEMHUM_IP = TEMHUM_IP;
+        Const.TEMHUM_PORT = Integer.parseInt(TEMHUM_PORT);
+        Const.PM25_IP = PM25_IP;
+        Const.PM25_PORT = Integer.parseInt(PM25_PORT);
+        Const.time = Integer.parseInt(time);
+
+    }
+
+
+}
