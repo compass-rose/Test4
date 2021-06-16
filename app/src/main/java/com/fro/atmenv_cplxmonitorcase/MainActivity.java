@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +23,8 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.File;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -63,6 +67,19 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.SettingMenu) {
             Intent intent = new Intent(MainActivity.this, SettingActivity.class);
             startActivity(intent);
+        }else if(item.getItemId() == R.id.ExportDB_Button){
+            Intent shareIntent = new Intent();
+            File path = new File(context.getDatabasePath("environment.db").getPath());
+            if(!path.exists()){
+                Log.d("DataBase Exists","Empty Database");
+            }else {
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(path));
+                shareIntent.setType("application/x-sqlite3");
+                context.startActivity(Intent.createChooser(shareIntent, "发送到"));
+            }
         }
         return true;
     }
@@ -82,6 +99,20 @@ public class MainActivity extends AppCompatActivity {
         graph_bt = (Button) findViewById(R.id.graph_bt);
         refresh_bt = (Button) findViewById(R.id.refresh_bt);
         DataBase = new SQLManager(context);
+//        DataBase.insert(0,21,45,165,24);
+//        DataBase.insert(0,12,42,65,12);
+//        DataBase.insert(1,31,61,45,33);
+//        DataBase.insert(1,32,42,145,44);
+//        DataBase.insert(2,14,32,95,25);
+//        DataBase.insert(2,7,86,105,55);
+//        DataBase.insert(3,23,43,12,66);
+//        DataBase.insert(3,21,85,35,77);
+//        DataBase.insert(4,18,52,77,14);
+//        DataBase.insert(4,34,81,123,72);
+//        DataBase.insert(5,37,65,14,31);
+//        DataBase.insert(5,39,12,51,24);
+//        DataBase.insert(6,40,73,67,56);
+//        DataBase.insert(6,21,98,88,79);
     }
 
 
