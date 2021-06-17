@@ -120,13 +120,12 @@ public class MainActivity extends AppCompatActivity {
      * 按钮监听
      */
     private void initEvent() {
-
         // 连接
         connect_tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    connectTask = new ConnectTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv, DataBase);
+                    connectTask = new ConnectTask(context, tem_tv, hum_tv, sun_tv, pm25_tv, info_tv, DataBase,connect_tb);
                     connectTask.setCIRCLE(true);
                     connectTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     refresh_bt.setOnClickListener(new OnClickListener() {

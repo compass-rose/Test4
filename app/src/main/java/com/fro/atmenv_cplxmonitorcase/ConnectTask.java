@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,7 @@ public class ConnectTask extends AsyncTask<Socket, Void, Void> {
 	private Float pm25;
 	private byte[] read_buff;
 
+	private ToggleButton connect_tb;
 	protected Socket sunSocket;
 	protected Socket temHumSocket;
 	protected Socket pm25Socket;
@@ -45,7 +47,7 @@ public class ConnectTask extends AsyncTask<Socket, Void, Void> {
 	private boolean CIRCLE = false;
 
 	public ConnectTask(Context context, TextView tem_tv,TextView hum_tv,TextView sun_tv,TextView pm25_tv, TextView info_tv
-			,SQLManager database) {
+			,SQLManager database, ToggleButton connect_tb) {
 		this.context = context;
 		this.sun_tv = sun_tv;
 		this.tem_tv = tem_tv;
@@ -53,6 +55,7 @@ public class ConnectTask extends AsyncTask<Socket, Void, Void> {
 		this.pm25_tv = pm25_tv;
 		this.info_tv = info_tv;
 		this.Database = database;
+		this.connect_tb= connect_tb;
 	}
 
 	/**
@@ -222,14 +225,20 @@ public class ConnectTask extends AsyncTask<Socket, Void, Void> {
 		if(sunSocket == null){
 			Toast.makeText(context,"光照传感器连接失败",Toast.LENGTH_SHORT).show();
 			Log.e("GetConnetct","SunError");
+			CIRCLE = false;
+			connect_tb.setChecked(false);
 		}
 		if(temHumSocket == null){
 			Toast.makeText(context,"温湿度传感器连接失败",Toast.LENGTH_SHORT).show();
 			Log.e("GetConnetct","TemHumError");
+			CIRCLE = false;
+			connect_tb.setChecked(false);
 		}
 		if(pm25Socket == null){
 			Toast.makeText(context,"Pm2.5传感器连接失败",Toast.LENGTH_SHORT).show();
 			Log.e("GetConnetct","Pm25Error");
+			CIRCLE = false;
+			connect_tb.setChecked(false);
 		}
 	}
 	/*
